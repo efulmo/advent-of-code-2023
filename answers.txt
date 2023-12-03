@@ -4,3 +4,6 @@
 
 02/part1/sample.txt - 8
 02/part2/sample.txt - 2286
+
+03/part1/sample.txt - 4361
+03/part2/sample.txt - 
