@@ -1,0 +1,6 @@
+01/part1/sample.txt - 142
+01/part2/sample.txt - 281
+01/part2/debug.txt - 39
+
+02/part1/sample.txt - 8
+02/part2/sample.txt - 2286
