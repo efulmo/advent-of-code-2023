@@ -10,7 +10,7 @@ import (
 	"github.com/efulmo/advent-of-code-2023/util"
 )
 
-func main() {
+func main2() {
 	lines, err := util.ReadInputFile()
 	util.PanicOnError(err)
 
@@ -76,5 +76,70 @@ func main() {
 	}
 
 	fmt.Println("Max queue len:", maxQueueLen)
+	fmt.Println("Cards total:", cardsProcessed)
+}
+
+func main() {
+	lines, err := util.ReadInputFile()
+	util.PanicOnError(err)
+
+	var cardsProcessed uint
+	copyCountByCardId := make(map[uint8]uint, len(lines))
+
+	for lineIdx, line := range lines {
+		lineParts := strings.Split(line, ":")
+		cardIdStr := strings.TrimPrefix(lineParts[0], "Card")
+		cardIdInt, err := strconv.Atoi(strings.TrimSpace(cardIdStr))
+		if err != nil {
+			util.PanicOnError(errors.Join(fmt.Errorf("Line %d. Error parsing <%s> as int", lineIdx+1,
+			cardIdStr), err))
+		}
+		cardId := uint8(cardIdInt)
+
+		numbersStrTrimmed := strings.TrimSpace(lineParts[1])
+		numbers := strings.Split(numbersStrTrimmed, " | ")
+		luckyNumbers := strings.Split(numbers[0], " ")
+
+		luckyNumbersMap := make(map[string]bool)
+		for _, num := range luckyNumbers {
+			numTrimmed := strings.TrimSpace(num)
+			if len(numTrimmed) == 0 {
+				continue
+			}
+
+			luckyNumbersMap[numTrimmed] = true
+		}
+
+		var guessedNumbersCount uint8
+		cardNumbers := strings.Split(numbers[1], " ")
+		for _, num := range cardNumbers {
+			numTrimmed := strings.TrimSpace(num)
+			if len(numTrimmed) == 0 {
+				continue
+			}
+
+			_, exists := luckyNumbersMap[numTrimmed]
+			if exists {
+				guessedNumbersCount++
+			}
+		}
+
+		fmt.Printf("Card %d. Guessed numbers: %d\n", cardId, guessedNumbersCount)
+
+		// original card
+		cardsProcessed++
+		
+		// card copies
+		copyCount := copyCountByCardId[cardId]
+		cardsProcessed += copyCount
+
+		// add card copies for next cards if current card is winning
+		for i := uint8(1); i <= guessedNumbersCount; i++ {
+			nextCardId := cardId + i
+			copyCountByCardId[nextCardId] += copyCount + 1 // +1 for the original card
+		}
+	}
+
+	fmt.Println("Card copies:", copyCountByCardId)
 	fmt.Println("Cards total:", cardsProcessed)
 }
