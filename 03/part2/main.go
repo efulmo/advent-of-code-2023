@@ -33,7 +33,7 @@ func main() {
 			gearPoints := getGearPoints(lines, partID)
 
 			if len(gearPoints) > 0 {
-				fmt.Printf("%d. %d has %d gears\n", lineIdx+1, partID.number, len(gearPoints))
+				fmt.Printf("%d. Part %d has %d gears around\n", lineIdx+1, partID.number, len(gearPoints))
 			}
 
 			for _, point := range gearPoints {
@@ -45,6 +45,8 @@ func main() {
 		}
 	}
 
+	fmt.Printf("%d gears detected around part IDs\n", len(gearConnections))
+
 	var gearRatioSum uint
 	for gearPoint, partIDs := range gearConnections {
 		partsConnected := len(partIDs)
@@ -55,6 +57,8 @@ func main() {
 
 			gearRatio := partIDs[0].number * partIDs[1].number
 			gearRatioSum += gearRatio
+		} else {
+			fmt.Printf("Gear %d:%d has %d connections\n", gearPoint.rowIdx, gearPoint.colIdx, partsConnected)
 		}
 	}
 
