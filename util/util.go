@@ -1,8 +1,10 @@
 package util
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -31,4 +33,13 @@ func PanicOnError(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func AtoiOrPanic(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		PanicOnError(errors.Join(fmt.Errorf("Failed to parse <%s> to int", s), err))
+	}
+
+	return i
 }
