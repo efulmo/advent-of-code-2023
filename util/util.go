@@ -43,3 +43,15 @@ func AtoiOrPanic(s string) int {
 
 	return i
 }
+
+func AtoUintOrPanic(s string) uint {
+	return uint(AtoiOrPanic(strings.TrimSpace(s)))
+}
+
+func StringsToUint(strs []string) []uint {
+	var res []uint
+	for _, s := range strs {
+		res = append(res, AtoUintOrPanic(s))
+	}
+	return res
+}
