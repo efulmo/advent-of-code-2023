@@ -57,7 +57,7 @@ func main() {
 				if leftDigit == "" {
 					leftDigit = rightDigit
 				}
-				
+
 				continue
 			}
 
@@ -94,7 +94,7 @@ func main() {
 func parseCharDigit(line string, idx int) *Number {
 	lineLen := len(line)
 	for _, num := range numbers {
-		if idx + len(num.chars) > lineLen {
+		if idx+len(num.chars) > lineLen {
 			continue
 		}
 
@@ -119,14 +119,14 @@ func stringIsAtIdx(input, sample string, idx int) bool {
 	if idx >= inputLen {
 		return false
 	}
-	
+
 	// sample is too long to match
-	if idx + sampleLen > inputLen {
+	if idx+sampleLen > inputLen {
 		return false
 	}
 
 	for i := 0; i < sampleLen; i++ {
-		if input[idx + i] != sample[i] {
+		if input[idx+i] != sample[i] {
 			return false
 		}
 	}

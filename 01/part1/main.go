@@ -30,7 +30,7 @@ func main() {
 	var sum uint
 	for lineIdx, line := range lines {
 		leftIdx, rightIdx := -1, -1
-		
+
 		for charIdx, r := range line {
 			if unicode.IsDigit(r) {
 				rightIdx = charIdx
@@ -49,7 +49,7 @@ func main() {
 		leftDigit := string(line[leftIdx])
 		rightDigit := string(line[rightIdx])
 		fmt.Printf("%d. %s. Detected %s, %s\n", lineIdx, line, leftDigit, rightDigit)
-		
+
 		lineValueStr := leftDigit + rightDigit
 		lineValue, err := strconv.Atoi(lineValueStr)
 		if err != nil {

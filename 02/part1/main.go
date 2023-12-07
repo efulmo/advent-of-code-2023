@@ -8,9 +8,9 @@ import (
 )
 
 var cubeLimits = map[string]uint8{
-	"red": 12,
+	"red":   12,
 	"green": 13,
-	"blue": 14,
+	"blue":  14,
 }
 
 func main() {
@@ -46,7 +46,7 @@ func main() {
 		isGamePossible := true
 
 		rounds := strings.Split(strings.TrimSpace(lineParts[1]), ";")
-		roundsLoop:
+	roundsLoop:
 		for roundIdx, round := range rounds {
 			cubeSets := strings.Split(round, ", ")
 			for cubeSetIdx, cubeSet := range cubeSets {
@@ -54,15 +54,15 @@ func main() {
 				cubeCountStr := setParts[0]
 				cubeCount, err := strconv.Atoi(cubeCountStr)
 				if err != nil {
-					fmt.Printf("Line %d, round %d, cubeset %d: Cannot parse cube count from <%s>: %s\n", 
+					fmt.Printf("Line %d, round %d, cubeset %d: Cannot parse cube count from <%s>: %s\n",
 						lineIdx, roundIdx, cubeSetIdx, cubeCountStr, err.Error())
 					os.Exit(1)
 				}
-				
+
 				cubeColour := setParts[1]
 				cubeLimit, ok := cubeLimits[cubeColour]
 				if !ok {
-					fmt.Printf("Line %d, round %d, cubeset %d: Unknown cube colour %s\n", 
+					fmt.Printf("Line %d, round %d, cubeset %d: Unknown cube colour %s\n",
 						lineIdx, roundIdx, cubeSetIdx, cubeColour)
 					os.Exit(1)
 				}

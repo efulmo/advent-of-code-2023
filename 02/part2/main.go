@@ -46,7 +46,7 @@ func main() {
 				}
 
 				cubeColour := setParts[1]
-				
+
 				lowestCubeCount, ok := optimalCubeCount[cubeColour]
 				if !ok || lowestCubeCount < uint(cubeCount) {
 					optimalCubeCount[cubeColour] = uint(cubeCount)
@@ -59,7 +59,7 @@ func main() {
 			gamePower *= int(cubeCount)
 		}
 
-		fmt.Printf("%d. %s\nOptimal count: %v. Game power: %d\n", 
+		fmt.Printf("%d. %s\nOptimal count: %v. Game power: %d\n",
 			lineIdx, line, optimalCubeCount, gamePower)
 		gamePowerSum += uint(gamePower)
 	}

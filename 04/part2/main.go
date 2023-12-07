@@ -2,9 +2,7 @@ package main
 
 import (
 	"container/list"
-	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/efulmo/advent-of-code-2023/util"
@@ -84,7 +82,7 @@ func main() {
 	for _, line := range lines {
 		lineParts := strings.Split(line, ":")
 		cardIdStr := strings.TrimPrefix(lineParts[0], "Card")
-		cardId := util.ParseUintOrPanic(strings.TrimSpace(cardIdStr))
+		cardId := uint8(util.ParseUintOrPanic(strings.TrimSpace(cardIdStr)))
 
 		numbersStrTrimmed := strings.TrimSpace(lineParts[1])
 		numbers := strings.Split(numbersStrTrimmed, " | ")
@@ -118,7 +116,7 @@ func main() {
 
 		// original card
 		cardsProcessed++
-		
+
 		// card copies
 		copyCount := copyCountByCardId[cardId]
 		cardsProcessed += copyCount

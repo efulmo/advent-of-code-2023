@@ -44,7 +44,7 @@ func main() {
 		}
 
 		if guessedNumbersCount > 0 {
-			cardValue := uint(math.Pow(2, float64(guessedNumbersCount - 1)))
+			cardValue := uint(math.Pow(2, float64(guessedNumbersCount-1)))
 
 			fmt.Printf("%d.%v. Lucky found: %d. Card value: %d\n", lineIdx+1,
 				numbersStrTrimmed, guessedNumbersCount, cardValue)
