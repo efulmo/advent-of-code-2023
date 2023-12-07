@@ -44,14 +44,18 @@ func AtoiOrPanic(s string) int {
 	return i
 }
 
-func AtoUintOrPanic(s string) uint {
-	return uint(AtoiOrPanic(strings.TrimSpace(s)))
+func ParseUintOrPanic(s string) uint {
+	u ,err := strconv.ParseUint(strings.TrimSpace(s), 10, 64)
+	if err != nil {
+		panic(errors.Join(fmt.Errorf("Failed to parse <%s> as uint", s), err))
+	}
+	return uint(u)
 }
 
 func StringsToUint(strs []string) []uint {
 	var res []uint
 	for _, s := range strs {
-		res = append(res, AtoUintOrPanic(s))
+		res = append(res, ParseUintOrPanic(s))
 	}
 	return res
 }

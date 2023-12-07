@@ -13,9 +13,9 @@ func main() {
 	lines, err := util.ReadInputFile()
 	util.PanicOnError(err)
 
-	time := util.AtoUintOrPanic(strings.ReplaceAll(strings.TrimPrefix(lines[0], "Time: "), " ", ""))
+	time := util.ParseUintOrPanic(strings.ReplaceAll(strings.TrimPrefix(lines[0], "Time: "), " ", ""))
 	fmt.Println("Time:", time)
-	distance := util.AtoUintOrPanic(
+	distance := util.ParseUintOrPanic(
 		strings.ReplaceAll(strings.TrimPrefix(lines[1], "Distance: "), " ", ""))
 	fmt.Println("Distance:", distance)
 
