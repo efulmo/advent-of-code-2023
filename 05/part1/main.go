@@ -68,8 +68,8 @@ func main() {
 	seedsStrSl := strings.Fields(seedsStr)
 	var seeds []uint
 	for _, seedStr := range seedsStrSl {
-		seedInt := util.AtoiOrPanic(seedStr)
-		seeds = append(seeds, uint(seedInt))
+		seedInt := util.ParseUintOrPanic(seedStr)
+		seeds = append(seeds, seedInt)
 	}
 
 	var ruleSets []RuleSet
@@ -122,9 +122,9 @@ func readRuleSet(lines []string, ruleSetStartIdx uint) (RuleSet, uint) {
 		}
 
 		rules = append(rules, Rule{
-			destStart:   uint(util.AtoiOrPanic(ruleNums[0])),
-			sourceStart: uint(util.AtoiOrPanic(ruleNums[1])),
-			length:      uint(util.AtoiOrPanic(ruleNums[2])),
+			destStart:   util.ParseUintOrPanic(ruleNums[0]),
+			sourceStart: util.ParseUintOrPanic(ruleNums[1]),
+			length:      util.ParseUintOrPanic(ruleNums[2]),
 		})
 	}
 

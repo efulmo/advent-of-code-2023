@@ -13,9 +13,9 @@ func main() {
 	lines, err := util.ReadInputFile()
 	util.PanicOnError(err)
 
-	times := util.StringsToUint(strings.Fields(lines[0])[1:])
+	times := util.StringsToUints(strings.Fields(lines[0])[1:])
 	fmt.Println("Time:", times)
-	distances := util.StringsToUint(strings.Fields(lines[1])[1:])
+	distances := util.StringsToUints(strings.Fields(lines[1])[1:])
 	fmt.Println("Distances:", distances)
 
 	timesLen := uint(len(times))
@@ -55,7 +55,7 @@ func main() {
 
 		var winningWays uint
 		if isLongestDistanceTimeInt {
-			winningWays = (longestDistanceTime - minChargingTimeToBeat) * 2 + 1
+			winningWays = (longestDistanceTime-minChargingTimeToBeat)*2 + 1
 		} else {
 			winningWays = (longestDistanceTime - minChargingTimeToBeat + 1) * 2
 		}

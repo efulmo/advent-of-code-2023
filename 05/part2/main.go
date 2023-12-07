@@ -72,13 +72,13 @@ func main() {
 
 	seedsStr := strings.TrimPrefix(lines[0], "seeds: ")
 	seedsStrSlice := strings.Fields(seedsStr)
-	
+
 	var seedRanges []SeedRange
 	seedStrSliceLen := uint(len(seedsStrSlice))
 	for i := uint(0); i < seedStrSliceLen; i += 2 {
 		seedRanges = append(seedRanges, SeedRange{
-			start: uint(util.AtoiOrPanic(seedsStrSlice[i])),
-			length: uint(util.AtoiOrPanic(seedsStrSlice[i+1])),
+			start:  util.ParseUintOrPanic(seedsStrSlice[i]),
+			length: util.ParseUintOrPanic(seedsStrSlice[i+1]),
 		})
 	}
 
@@ -97,9 +97,9 @@ func main() {
 
 	var chans []chan uint
 	for seedRangeIdx, seedRange := range seedRanges {
-		fmt.Printf("Processing seed range %d/%d of size %d\n", seedRangeIdx + 1, len(seedRanges),
+		fmt.Printf("Processing seed range %d/%d of size %d\n", seedRangeIdx+1, len(seedRanges),
 			seedRange.length)
-		
+
 		ch := make(chan uint)
 		chans = append(chans, ch)
 
@@ -110,10 +110,10 @@ func main() {
 				for _, ruleSet := range ruleSets {
 					seed = uint(ruleSet.apply(uint(seed)))
 				}
-	
+
 				minSeed = min(minSeed, seed)
 			}
-			ch<-minSeed
+			ch <- minSeed
 		}(seedRange)
 	}
 
@@ -152,9 +152,9 @@ func readRuleSet(lines []string, ruleSetStartIdx uint) (RuleSet, uint) {
 		}
 
 		rules = append(rules, Rule{
-			destStart:   uint(util.AtoiOrPanic(ruleNums[0])),
-			sourceStart: uint(util.AtoiOrPanic(ruleNums[1])),
-			length:      uint(util.AtoiOrPanic(ruleNums[2])),
+			destStart:   util.ParseUintOrPanic(ruleNums[0]),
+			sourceStart: util.ParseUintOrPanic(ruleNums[1]),
+			length:      util.ParseUintOrPanic(ruleNums[2]),
 		})
 	}
 

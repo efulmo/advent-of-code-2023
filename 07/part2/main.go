@@ -51,7 +51,7 @@ func (h *Hand) getCombination() uint8 {
 	for _, card := range h.cards {
 		countByCard[string(card)]++
 	}
-	
+
 	jokersCount := countByCard[jokerChar]
 	if jokersCount > 0 {
 		var maxNonJokerCard string

@@ -67,7 +67,7 @@ func parsePartIDs(line string, lineIdx uint) []PartID {
 					lineIdx:  lineIdx,
 					startIdx: uint(startRegionIdx),
 					endIdx:   uint(charIdx),
-					number:   parsePartIDNumber(line, lineIdx, uint(startRegionIdx), uint(charIdx)),
+					number:   parsePartIDNumber(line, uint(startRegionIdx), uint(charIdx)),
 				})
 
 				// fmt.Printf("Parsed region %d:%d\n", startRegionIdx, charIdx)
@@ -82,14 +82,14 @@ func parsePartIDs(line string, lineIdx uint) []PartID {
 			lineIdx:  lineIdx,
 			startIdx: uint(startRegionIdx),
 			endIdx:   uint(len(line)),
-			number:   parsePartIDNumber(line, lineIdx, uint(startRegionIdx), uint(len(line))),
+			number:   parsePartIDNumber(line, uint(startRegionIdx), uint(len(line))),
 		})
 	}
 
 	return partIDs
 }
 
-func parsePartIDNumber(line string, lineIdx, startIdx, endIdx uint) uint {
+func parsePartIDNumber(line string, startIdx, endIdx uint) uint {
 	partIDStr := line[startIdx:endIdx]
 
 	// potential int truncation
@@ -97,12 +97,7 @@ func parsePartIDNumber(line string, lineIdx, startIdx, endIdx uint) uint {
 		panic(fmt.Errorf("Potentionally too big part ID for int: %s", partIDStr))
 	}
 
-	partID, err := strconv.Atoi(partIDStr)
-	if err != nil {
-		util.PanicOnError(errors.Join(fmt.Errorf("Line %d [%d:%d]. Failed to convert <%s> to number",
-			lineIdx, startIdx, endIdx, partIDStr), err))
-	}
-	return uint(partID)
+	return util.ParseUintOrPanic(partIDStr)
 }
 
 func partIDsToNumbers(partIDs []PartID) []uint {

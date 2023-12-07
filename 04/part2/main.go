@@ -17,15 +17,10 @@ func main2() {
 	guessCountByCardId := make(map[uint8]uint8, len(lines))
 	cardsQueue := list.New()
 
-	for lineIdx, line := range lines {
+	for _, line := range lines {
 		lineParts := strings.Split(line, ":")
 		cardIdStr := strings.TrimPrefix(lineParts[0], "Card")
-		cardIdInt, err := strconv.Atoi(strings.TrimSpace(cardIdStr))
-		if err != nil {
-			util.PanicOnError(errors.Join(fmt.Errorf("Line %d. Error parsing <%s> as int", lineIdx+1,
-			cardIdStr), err))
-		}
-		cardId := uint8(cardIdInt)
+		cardId := uint8(util.ParseUintOrPanic(strings.TrimSpace(cardIdStr)))
 
 		numbersStrTrimmed := strings.TrimSpace(lineParts[1])
 		numbers := strings.Split(numbersStrTrimmed, " | ")
@@ -86,15 +81,10 @@ func main() {
 	var cardsProcessed uint
 	copyCountByCardId := make(map[uint8]uint, len(lines))
 
-	for lineIdx, line := range lines {
+	for _, line := range lines {
 		lineParts := strings.Split(line, ":")
 		cardIdStr := strings.TrimPrefix(lineParts[0], "Card")
-		cardIdInt, err := strconv.Atoi(strings.TrimSpace(cardIdStr))
-		if err != nil {
-			util.PanicOnError(errors.Join(fmt.Errorf("Line %d. Error parsing <%s> as int", lineIdx+1,
-			cardIdStr), err))
-		}
-		cardId := uint8(cardIdInt)
+		cardId := util.ParseUintOrPanic(strings.TrimSpace(cardIdStr))
 
 		numbersStrTrimmed := strings.TrimSpace(lineParts[1])
 		numbers := strings.Split(numbersStrTrimmed, " | ")

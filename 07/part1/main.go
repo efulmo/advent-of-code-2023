@@ -102,7 +102,7 @@ func main() {
 
 	fmt.Println("Hands before sorting:")
 	fmt.Println(ptrsToHands(hands))
-	
+
 	slices.SortFunc(hands, compareCards)
 
 	fmt.Println("Hands after sorting:")

@@ -35,24 +35,15 @@ func PanicOnError(err error) {
 	}
 }
 
-func AtoiOrPanic(s string) int {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		PanicOnError(errors.Join(fmt.Errorf("Failed to parse <%s> to int", s), err))
-	}
-
-	return i
-}
-
 func ParseUintOrPanic(s string) uint {
-	u ,err := strconv.ParseUint(strings.TrimSpace(s), 10, 64)
+	u, err := strconv.ParseUint(s, 10, 64)
 	if err != nil {
 		panic(errors.Join(fmt.Errorf("Failed to parse <%s> as uint", s), err))
 	}
 	return uint(u)
 }
 
-func StringsToUint(strs []string) []uint {
+func StringsToUints(strs []string) []uint {
 	var res []uint
 	for _, s := range strs {
 		res = append(res, ParseUintOrPanic(s))
