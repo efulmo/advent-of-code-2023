@@ -50,3 +50,24 @@ func StringsToUints(strs []string) []uint {
 	}
 	return res
 }
+
+func StringsToInts(strs []string) []int {
+	var res []int
+	for _, s := range strs {
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			panic(errors.Join(fmt.Errorf("Failed to parse <%s> as int", s), err))
+		}
+		res = append(res, i)
+	}
+	return res
+}
+
+func SliceContainsSameValue[T comparable](sl []T, value T) bool {
+	for _, u := range sl {
+		if u != value {
+			return false
+		}
+	}
+	return true
+}

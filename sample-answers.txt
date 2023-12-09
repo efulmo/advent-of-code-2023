@@ -22,3 +22,6 @@
 08/part1/sample1: 2
 08/part1/sample2: 6
 08/part2: 6
+
+09/part1: 114
+09/part2: 2

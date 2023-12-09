@@ -91,9 +91,9 @@ func main() {
 			fmt.Printf("Ghost %d reached finish node %s in %d steps. Path hash %d\n", ghostIdx,
 				nodeName, stepsMade, pathHash)
 		}
-		
-		if sliceContainsSameValue(pathLengths, pathLengths[0]) &&
-			sliceContainsSameValue(pathHashes[1:], pathHashes[1]) {
+
+		if util.SliceContainsSameValue(pathLengths, pathLengths[0]) &&
+			util.SliceContainsSameValue(pathHashes[1:], pathHashes[1]) {
 			ghostPathLengths = append(ghostPathLengths, pathLengths[0])
 		} else {
 			panic(fmt.Errorf("Ghost %d path isn't cycled", ghostIdx))
@@ -101,7 +101,7 @@ func main() {
 	}
 
 	fmt.Println("Ghost path lengths:", ghostPathLengths)
-	fmt.Println("Shortest common path length:", lcm(ghostPathLengths[0], ghostPathLengths[1], 
+	fmt.Println("Shortest common path length:", lcm(ghostPathLengths[0], ghostPathLengths[1],
 		ghostPathLengths...))
 }
 
@@ -123,20 +123,11 @@ func parseNodes(lines []string) map[string]Node {
 	return nodeByName
 }
 
-func sliceContainsSameValue(sl []uint, value uint) bool {
-	for _, u := range sl {
-		if u != value {
-			return false
-		}
-	}
-	return true
-}
-
 func gcd(a, b uint) uint {
 	for b != 0 {
-			temp := b
-			b = a % b
-			a = temp
+		temp := b
+		b = a % b
+		a = temp
 	}
 	return a
 }
