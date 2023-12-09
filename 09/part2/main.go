@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/efulmo/advent-of-code-2023/util"
@@ -11,20 +12,21 @@ func main() {
 	lines, err := util.ReadInputFile()
 	util.PanicOnError(err)
 
-	var prevValueSum int
+	var nextValueSum int
 	for lineIdx, line := range lines {
 		vals := util.StringsToInts(strings.Fields(line))
-		prevValue := predictPrevValue(uint(lineIdx), vals)
+		slices.Reverse(vals)
+		nextValue := predictNextValue(uint(lineIdx), vals)
 
-		fmt.Printf("%d. %d... %v\n", lineIdx+1, prevValue, vals)
+		fmt.Printf("%d. %v... %d\n", lineIdx+1, vals, nextValue)
 
-		prevValueSum += prevValue
+		nextValueSum += nextValue
 	}
 
-	fmt.Println("Next values sum:", prevValueSum)
+	fmt.Println("Next values sum:", nextValueSum)
 }
 
-func predictPrevValue(lineIdx uint, vals []int) int {
+func predictNextValue(lineIdx uint, vals []int) int {
 	var diffs [][]int
 	diffs = append(diffs, vals)
 
@@ -51,18 +53,14 @@ func predictPrevValue(lineIdx uint, vals []int) int {
 	for i := uint(len(diffs)) - 1; i > 0; i-- {
 		row := diffs[i]
 		upperRow := diffs[i-1]
-		upperRowPrevVal := upperRow[0] - row[0]
-
-		updatedUpperRow := make([]int, 0, len(upperRow)+1)
-		updatedUpperRow = append(updatedUpperRow, upperRowPrevVal)
-		updatedUpperRow = append(updatedUpperRow, upperRow...)
-		diffs[i-1] = updatedUpperRow
+		upperRowNextVal := upperRow[len(upperRow)-1] + row[len(row)-1]
+		diffs[i-1] = append(upperRow, upperRowNextVal)
 	}
 
-	fmt.Printf("%d. After prev values are added:\n", lineIdx+1)
+	fmt.Printf("%d. After next values are added:\n", lineIdx+1)
 	for _, row := range diffs {
 		fmt.Println(row)
 	}
 
-	return diffs[0][0]
+	return diffs[0][len(diffs[0])-1]
 }
