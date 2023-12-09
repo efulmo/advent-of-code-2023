@@ -1,9 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"strconv"
 	"unicode"
 
 	"github.com/efulmo/advent-of-code-2023/util"
