@@ -6,14 +6,9 @@ import (
 	"github.com/efulmo/advent-of-code-2023/util"
 )
 
-type Coord struct {
+type Tile struct {
 	rowIdx int
 	colIdx int
-}
-
-type Tile struct {
-	coord Coord
-	char  string
 }
 
 type Step struct {
@@ -30,8 +25,9 @@ const (
 )
 
 const (
-	charStart  = "S"
-	charGround = "."
+	charStart   = "S"
+	charGround  = "."
+	charUnknown = "?"
 
 	charUpDown  = "|"
 	charUpRight = "F"
@@ -54,11 +50,11 @@ func main() {
 	lines, err := util.ReadInputFile()
 	util.PanicOnError(err)
 
-	var startCoord Coord
+	var startTile Tile
 	for lineIdx, line := range lines {
 		for colIdx, r := range line {
 			if string(r) == charStart {
-				startCoord = Coord{
+				startTile = Tile{
 					rowIdx: lineIdx,
 					colIdx: colIdx,
 				}
@@ -67,7 +63,7 @@ func main() {
 		}
 	}
 
-	var currentTile = getTileAt(lines, startCoord)
+	var currentTile = startTile
 	pathLength := uint(1)
 	var previousTile Tile
 
@@ -75,13 +71,14 @@ func main() {
 		nextStep := getNextStep(lines, currentTile, previousTile)
 
 		// start is found again; the loop has closed
-		if nextStep.toTile.char == charStart {
+		nextTileChar := getCharAt(lines, nextStep.toTile)
+		if nextTileChar == charStart {
 			break
 		}
 
-		fmt.Printf("%d. Taking a step in direction %d to tile %d:%d with rune %s\n", pathLength,
-			nextStep.direction, nextStep.toTile.coord.rowIdx+1, nextStep.toTile.coord.colIdx+1,
-			nextStep.toTile.char)
+		fmt.Printf("%d. Taking a step in direction %d to tile %d:%d with char %s\n", pathLength,
+			nextStep.direction, nextStep.toTile.rowIdx+1, nextStep.toTile.colIdx+1,
+			nextTileChar)
 
 		previousTile = currentTile
 		currentTile = nextStep.toTile
@@ -93,31 +90,28 @@ func main() {
 }
 
 func getNextStep(lines []string, currentTile Tile, previousTile Tile) Step {
-	availableDirs := getAvailableDirectionsFromChar(currentTile.char)
+	availableDirs := getAvailableDirectionsFromChar(getCharAt(lines, currentTile))
 
-	currentCoord := currentTile.coord
 	for _, dir := range availableDirs {
-		var nextCoord Coord
+		var nextTile Tile
 		switch dir {
 		case directionUp:
-			nextCoord = Coord{currentCoord.rowIdx - 1, currentCoord.colIdx}
+			nextTile = Tile{currentTile.rowIdx - 1, currentTile.colIdx}
 		case directionRight:
-			nextCoord = Coord{currentCoord.rowIdx, currentCoord.colIdx + 1}
+			nextTile = Tile{currentTile.rowIdx, currentTile.colIdx + 1}
 		case directionDown:
-			nextCoord = Coord{currentCoord.rowIdx + 1, currentCoord.colIdx}
+			nextTile = Tile{currentTile.rowIdx + 1, currentTile.colIdx}
 		case directionLeft:
-			nextCoord = Coord{currentCoord.rowIdx, currentCoord.colIdx - 1}
+			nextTile = Tile{currentTile.rowIdx, currentTile.colIdx - 1}
 		}
 
 		// don't go back
-		if previousTile.coord == nextCoord {
+		if previousTile == nextTile {
 			continue
 		}
 
-		nextTile := getTileAt(lines, nextCoord)
-
 		// check if getting to that tile allowed from this direction
-		if !isStepDestinationValid(dir, nextTile) {
+		if !isStepDestinationValid(lines, dir, nextTile) {
 			continue
 		}
 
@@ -128,8 +122,8 @@ func getNextStep(lines []string, currentTile Tile, previousTile Tile) Step {
 		}
 	}
 
-	panic(fmt.Errorf("Failed to find next tile from %d:%d(%s)", currentCoord.rowIdx,
-		currentCoord.rowIdx, currentTile.char))
+	panic(fmt.Errorf("Failed to find next tile from %d:%d(%s)", currentTile.rowIdx,
+		currentTile.rowIdx, getCharAt(lines, currentTile)))
 }
 
 func getAvailableDirectionsFromChar(c string) []uint8 {
@@ -156,29 +150,22 @@ func getAvailableDirectionsFromChar(c string) []uint8 {
 	return dirs
 }
 
-func getTileAt(lines []string, coord Coord) Tile {
-	return Tile{
-		coord: coord,
-		char:  getCharAt(lines, coord),
-	}
-}
-
-func getCharAt(lines []string, coord Coord) string {
-	row, col := coord.rowIdx, coord.colIdx
+func getCharAt(lines []string, tile Tile) string {
+	row, col := tile.rowIdx, tile.colIdx
 	if row < 0 || col < 0 || row >= len(lines) {
-		return charGround
+		return charUnknown
 	}
 
 	line := lines[row]
 	if col >= len(line) {
-		return charGround
+		return charUnknown
 	}
 
 	return string(line[col])
 }
 
-func isStepDestinationValid(direction uint8, to Tile) bool {
-	r := to.char
+func isStepDestinationValid(lines []string, direction uint8, to Tile) bool {
+	r := getCharAt(lines, to)
 	if r == charStart {
 		return true
 	}
