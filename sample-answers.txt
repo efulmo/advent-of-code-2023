@@ -25,3 +25,6 @@
 
 09/part1: 114
 09/part2: 2
+
+10/part1/sample1: 8
+10/part1/sample2: 16
