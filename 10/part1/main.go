@@ -25,9 +25,9 @@ const (
 )
 
 const (
-	charStart   = "S"
-	charGround  = "."
-	charUnknown = "?"
+	charStart         = "S"
+	charGround        = "."
+	charBeyondBorders = "?"
 
 	charUpDown  = "|"
 	charUpRight = "F"
@@ -153,12 +153,12 @@ func getAvailableDirectionsFromChar(c string) []uint8 {
 func getCharAt(lines []string, tile Tile) string {
 	row, col := tile.rowIdx, tile.colIdx
 	if row < 0 || col < 0 || row >= len(lines) {
-		return charUnknown
+		return charBeyondBorders
 	}
 
 	line := lines[row]
 	if col >= len(line) {
-		return charUnknown
+		return charBeyondBorders
 	}
 
 	return string(line[col])

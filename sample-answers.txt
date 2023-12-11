@@ -28,3 +28,7 @@
 
 10/part1/sample1: 8
 10/part1/sample2: 16
+10/part2/sample1: 4
+10/part2/sample2: 8
+10/part2/sample3: 10
+10/part2/input: 756>x
