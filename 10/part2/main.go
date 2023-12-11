@@ -1,7 +1,6 @@
 package main
 
 import (
-	"container/list"
 	"fmt"
 	"slices"
 	"strings"
@@ -78,6 +77,7 @@ func main() {
 	var currentTile = startTile
 	var previousTile Tile
 	step := uint(1)
+	path := []Tile{startTile}
 	pathCluster := map[Tile]bool{
 		startTile: true,
 	}
@@ -95,6 +95,7 @@ func main() {
 			nextStep.direction, nextStep.toTile.rowIdx+1, nextStep.toTile.colIdx+1,
 			nextTileChar)
 
+		path = append(path, nextStep.toTile)
 		pathCluster[nextStep.toTile] = true
 		previousTile = currentTile
 		currentTile = nextStep.toTile
@@ -103,61 +104,32 @@ func main() {
 
 	fmt.Printf("Path cluster contains %d tiles: %v\n", len(pathCluster), printCluster(pathCluster))
 
-	clusters := map[uint]map[Tile]bool{
-		clusterPath: pathCluster,
-	}
+	replacementChar := getStartTileReplacement(lines, path)
+	lines[startTile.rowIdx] = strings.ReplaceAll(lines[startTile.rowIdx], charStart, replacementChar)
+
+	var enclosedTiles []Tile
 
 	for rowIdx, line := range lines {
+		isWhithinPath := false
 		for colIdx := range line {
 			t := Tile{
 				rowIdx: rowIdx,
 				colIdx: colIdx,
 			}
+			c := getCharAt(lines, t)
 
-			if !inAnyCluster(clusters, t) {
-				newCluster := buildCluster(lines, clusters, t)
-				newClusterID := uint(len(clusters))
-				clusters[newClusterID] = newCluster
-
-				fmt.Printf("Cluster #%d is detected with %d tiles: %v\n", newClusterID,
-					len(newCluster), printCluster(newCluster))
+			if pathCluster[t] {
+				// north -> inverse
+				if c == charDownUp || c == charLeftUp || c == charRightUp {
+					isWhithinPath = !isWhithinPath
+				}
+			} else if isWhithinPath {
+				enclosedTiles = append(enclosedTiles, t)
 			}
 		}
 	}
 
-	lastRowIdx := len(lines) - 1
-	lastColIdx := len(lines[0]) - 1
-	clustersLen := uint(len(clusters))
-	var enclosedClusters []map[Tile]bool
-	var enclosedClustersIDs []uint
-
-	for i := uint(1); i < clustersLen; i++ {
-		cluster := clusters[i]
-		isClusterAdjacentToBorder := false
-		
-		for tile := range cluster {
-			if tile.rowIdx == 0 || tile.rowIdx == lastRowIdx ||
-				tile.colIdx == 0 || tile.colIdx == lastColIdx {
-				isClusterAdjacentToBorder = true
-				break
-			}
-		}
-
-		if !isClusterAdjacentToBorder {
-			enclosedClusters = append(enclosedClusters, cluster)
-			enclosedClustersIDs = append(enclosedClustersIDs, i)
-		}
-	}
-
-	fmt.Printf("%d enclosed clusters found out of %d: %v\n", len(enclosedClusters), clustersLen-1,
-		enclosedClustersIDs)
-
-	enclosedTileCount := uint(0)
-	for _, cluster := range enclosedClusters {
-		enclosedTileCount += uint(len(cluster))
-	}
-
-	fmt.Println("Enclosed tiles found:", enclosedTileCount)
+	fmt.Printf("%d enclosed tiles found: %v\n", len(enclosedTiles), printTiles(enclosedTiles))
 }
 
 func getNextStep(lines []string, currentTile Tile, previousTile Tile) Step {
@@ -254,46 +226,6 @@ func isStepDestinationValid(lines []string, direction uint8, to Tile) bool {
 	}
 }
 
-func inAnyCluster(clusters map[uint]map[Tile]bool, tile Tile) bool {
-	for _, cluster := range clusters {
-		if cluster[tile] {
-			return true
-		}
-	}
-
-	return false
-}
-
-func buildCluster(lines []string, clusters map[uint]map[Tile]bool, startTile Tile) map[Tile]bool {
-	cluster := map[Tile]bool{
-		startTile: true,
-	}
-
-	tilesToProcess := list.New()
-	tilesToProcess.PushBack(startTile)
-
-	for tilesToProcess.Len() > 0 {
-		listEl := tilesToProcess.Front()
-		currentTile := listEl.Value.(Tile)
-
-		for _, dir := range allDirections {
-			potentialClusterTile := getTileInDirection(currentTile, dir)
-			if !isTileValid(lines, potentialClusterTile) {
-				continue
-			}
-
-			if !cluster[potentialClusterTile] && !inAnyCluster(clusters, potentialClusterTile) {
-				cluster[potentialClusterTile] = true
-				tilesToProcess.PushBack(potentialClusterTile)
-			}
-		}
-
-		tilesToProcess.Remove(listEl)
-	}
-
-	return cluster
-}
-
 func isTileValid(lines []string, tile Tile) bool {
 	row, col := tile.rowIdx, tile.colIdx
 	if row < 0 || col < 0 || row >= len(lines) {
@@ -323,10 +255,57 @@ func printCluster(cluster map[Tile]bool) string {
 		return 0
 	})
 
+	return printTiles(tilesSl)
+}
+
+func printTiles(tiles []Tile) string {
 	var tilesFormatted []string
-	for _, tile := range tilesSl {
+	for _, tile := range tiles {
 		tilesFormatted = append(tilesFormatted, fmt.Sprintf("%d:%d", tile.rowIdx+1, tile.colIdx+1))
 	}
 
 	return strings.Join(tilesFormatted, ", ")
+}
+
+func getStartTileReplacement(lines []string, path []Tile) string {
+	startTile := path[0]
+	lastTile := path[len(path)-1]
+	preLastTile := path[len(path)-2]
+
+	stepFromLast := getNextStep(lines, lastTile, preLastTile)
+	stepFromStart := getNextStep(lines, startTile, lastTile)
+
+	// -
+	if (stepFromLast.direction == directionRight || stepFromStart.direction == directionRight) &&
+		(stepFromLast.direction == directionLeft || stepFromStart.direction == directionLeft) {
+		return charLeftRight
+	}
+	// |
+	if (stepFromLast.direction == directionUp || stepFromStart.direction == directionUp) &&
+		(stepFromLast.direction == directionDown || stepFromStart.direction == directionDown) {
+		return charDownUp
+	}
+	// F
+	if (stepFromLast.direction == directionUp && stepFromStart.direction == directionRight) ||
+		(stepFromLast.direction == directionLeft && stepFromStart.direction == directionDown) {
+		return charUpRight
+	}
+	// 7
+	if (stepFromLast.direction == directionUp && stepFromStart.direction == directionLeft) ||
+		(stepFromLast.direction == directionRight && stepFromStart.direction == directionDown) {
+		return charUpLeft
+	}
+	// L
+	if (stepFromLast.direction == directionDown && stepFromStart.direction == directionRight) ||
+		(stepFromLast.direction == directionLeft && stepFromStart.direction == directionUp) {
+		return charDownRight
+	}
+	// J
+	if (stepFromLast.direction == directionDown && stepFromStart.direction == directionLeft) ||
+		(stepFromLast.direction == directionRight && stepFromStart.direction == directionUp) {
+		return charDownLeft
+	}
+
+	panic(fmt.Errorf("Failed to detect start tile replacement. From last direction %d. " +
+		"From start direction %d", stepFromLast.direction, stepFromStart.direction))
 }
