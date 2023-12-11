@@ -32,3 +32,6 @@
 10/part2/sample2: 8
 10/part2/sample3: 10
 10/part2/debug1: 4
+
+11/part1/sample: 374
+11/part2/sample: x10-1030, x100-8410
