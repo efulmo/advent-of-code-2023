@@ -35,3 +35,6 @@
 
 11/part1/sample: 374
 11/part2/sample: x10-1030, x100-8410
+
+12/part1/sample: 21
+12/part1/debug: 2
