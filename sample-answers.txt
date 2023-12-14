@@ -38,3 +38,4 @@
 
 12/part1/sample: 21
 12/part1/debug: 2
+12/part2/sample: 525152

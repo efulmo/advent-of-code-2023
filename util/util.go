@@ -71,3 +71,7 @@ func SliceContainsSameValue[T comparable](sl []T, value T) bool {
 	}
 	return true
 }
+
+func DebugLog(str string, params ...any) {
+	fmt.Printf(str, params...)
+}
