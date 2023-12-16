@@ -43,3 +43,6 @@
 13/part1/sample: 405
 13/part2/sample: 400
 13/part2/debug: 1000
+
+14/part1/sample: 136
+14/part2/sample: 64
