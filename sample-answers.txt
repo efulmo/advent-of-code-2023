@@ -54,3 +54,5 @@
 16/part2/sample: 51
 
 17/part1/sample: 102
+17/part2/sample: 94
+17/part2/sample2: 71

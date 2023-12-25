@@ -17,7 +17,8 @@ const (
 
 	infinityHealLoss = 999_999_999
 
-	maxStepsInSameDirection = 3
+	minStepsInSameDirection = 4
+	maxStepsInSameDirection = 10
 )
 
 type Coord struct {
@@ -65,10 +66,10 @@ func main() {
 	}
 
 	analyzedNodes := make(map[Node]bool)
-	
+
 	nodesToAnalyze := []Node{startNode}
 	nodeComparator := byTotalHeatLossComparator(nodeInfos)
-	
+
 	for len(nodesToAnalyze) > 0 {
 		// heatLosses := nodesToTotalHeatLoss(nodesToAnalyze, nodeInfos)
 		// fmt.Println("Selecting 1st node from nodes to analyze:", heatLosses)
@@ -84,9 +85,9 @@ func main() {
 		neighbourNodes := getNeighbourNodes(currentNode, analyzedNodes, rowsTotal, colsTotal)
 
 		// coord := currentNode.coord
-		// fmt.Printf("Analyzing node %d:%d:%s:%d with total hit loss %d and %d neighbours. Queue: %d\n",
+		// util.DebugLog("Analyzing node %d:%d:%s:%d with total hit loss %d and %d neighbours. Queue: %d\n",
 		// 	coord.rowIdx+1, coord.colIdx+1, currentNode.inDirection, currentNode.stepsMadeInDirection,
-		// 	currentNodeInfo.totalHeatLoss, len(neighbourNodes), 
+		// 	currentNodeInfo.totalHeatLoss, len(neighbourNodes),
 		// 	len(nodesToAnalyze),
 		// )
 
@@ -100,12 +101,12 @@ func main() {
 
 			newTotalHeatLoss := currentNodeInfo.totalHeatLoss + uint(heatLossByCoord[neighbourNodeCoord])
 
-			// fmt.Printf("New total heat loss for %d:%d:%s:%d node: %d. Old: %d\n",
+			// util.DebugLog("New total heat loss for %d:%d:%s:%d node: %d. Old: %d\n",
 			// 	neighbourNodeCoord.rowIdx+1, neighbourNodeCoord.colIdx+1, neighbourNode.inDirection,
 			// 	neighbourNode.stepsMadeInDirection, newTotalHeatLoss, neighbourNodeTotalHeatLoss)
 
 			if newTotalHeatLoss < neighbourNodeTotalHeatLoss {
-				// fmt.Printf("New total heat loss is set for node %s - %d. Old: %d\n",
+				// util.DebugLog("New total heat loss is set for node %s - %d. Old: %d\n",
 				// 	formatNode(neighbourNode, heatLossByCoord),
 				// 	newTotalHeatLoss, neighbourNodeTotalHeatLoss)
 
@@ -117,7 +118,7 @@ func main() {
 				nodesToAnalyze = insertSortingAwareIfAbsent(nodesToAnalyze, neighbourNode, nodeComparator)
 			}
 		}
-		
+
 		analyzedNodes[currentNode] = true
 	}
 
@@ -132,7 +133,9 @@ func main() {
 			fmt.Printf("Finish node found %s with total heat loss %d\n", formatNode(node,
 				heatLossByCoord), nodeInfo.totalHeatLoss)
 
-			if !finishNodeFound || nodeInfo.totalHeatLoss < nodeInfos[finishNode].totalHeatLoss {
+			if node.stepsMadeInDirection >= minStepsInSameDirection &&
+				node.stepsMadeInDirection <= maxStepsInSameDirection && (
+					!finishNodeFound || nodeInfo.totalHeatLoss < nodeInfos[finishNode].totalHeatLoss) {
 				finishNode = node
 				finishNodeFound = true
 			}
@@ -146,7 +149,11 @@ func main() {
 	} else {
 		fmt.Printf("Finish node: %s. Heat loss: %d\n", formatNode(finishNode, heatLossByCoord),
 			finishNodeInfo.totalHeatLoss)
-		// fmt.Println("Optimal path:", formatNodePath(buildNodePath(finishNode, nodeInfos), heatLossByCoord))
+		// fmt.Println("Optimal path:")
+		// formattedPathNodes := formatNodePath(buildNodePath(finishNode, nodeInfos), heatLossByCoord)
+		// for step, formattedMode := range formattedPathNodes {
+		// 	fmt.Printf("%d. %s\n", step+1, formattedMode)
+		// }
 	}
 }
 
@@ -179,20 +186,25 @@ func insertSortingAwareIfAbsent(nodes []Node, nodeToInsert Node, comparator func
 
 func getNeighbourNodes(node Node, analyzedNodes map[Node]bool, rowsTotal, colsTotal uint8) []Node {
 	var allowedNextMoveDirections []string
-	switch node.inDirection {
-	// starting node only; may go to any direction
-	case directionNone:
-		allowedNextMoveDirections = []string{directionRight, directionDown}
-	case directionRight:
-		allowedNextMoveDirections = []string{directionRight, directionDown, directionUp}
-	case directionDown:
-		allowedNextMoveDirections = []string{directionRight, directionDown, directionLeft}
-	case directionLeft:
-		allowedNextMoveDirections = []string{directionDown, directionLeft, directionUp}
-	case directionUp:
-		allowedNextMoveDirections = []string{directionRight, directionLeft, directionUp}
-	default:
-		panic(fmt.Errorf("Unexpected direction %s", node.inDirection))
+
+	if node.inDirection != directionNone && node.stepsMadeInDirection < minStepsInSameDirection {
+		allowedNextMoveDirections = []string{node.inDirection}
+	} else {
+		switch node.inDirection {
+		// starting node only; may go to any direction
+		case directionNone:
+			allowedNextMoveDirections = []string{directionRight, directionDown}
+		case directionRight:
+			allowedNextMoveDirections = []string{directionRight, directionDown, directionUp}
+		case directionDown:
+			allowedNextMoveDirections = []string{directionRight, directionDown, directionLeft}
+		case directionLeft:
+			allowedNextMoveDirections = []string{directionDown, directionLeft, directionUp}
+		case directionUp:
+			allowedNextMoveDirections = []string{directionRight, directionLeft, directionUp}
+		default:
+			panic(fmt.Errorf("Unexpected direction %s", node.inDirection))
+		}
 	}
 
 	coord := node.coord
