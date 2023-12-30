@@ -59,3 +59,6 @@
 
 18/part1/sample: 62
 18/part2/sample: 952408144115
+
+19/part1/sample: 19114
+19/part2/sample: 167409079868000
