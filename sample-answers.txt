@@ -62,3 +62,6 @@
 
 19/part1/sample: 19114
 19/part2/sample: 167409079868000
+
+20/part1/sample1: 32000000
+20/part1/sample2: 11687500
