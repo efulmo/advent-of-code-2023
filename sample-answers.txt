@@ -65,3 +65,5 @@
 
 20/part1/sample1: 32000000
 20/part1/sample2: 11687500
+
+21/part1/sample: 42
