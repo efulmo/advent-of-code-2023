@@ -71,3 +71,5 @@
 22/part1/sample: 5
 22/part2/sample: 7
 
+23/part1/sample: 94
+23/part2/sample: 154
