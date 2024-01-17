@@ -43,6 +43,14 @@ func ParseUintOrPanic(s string) uint {
 	return uint(u)
 }
 
+func ParseIntOrPanic(s string) int {
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		panic(errors.Join(fmt.Errorf("Failed to parse <%s> as int", s), err))
+	}
+	return int(i)
+}
+
 func StringsToUints(strs []string) []uint {
 	var res []uint
 	for _, s := range strs {

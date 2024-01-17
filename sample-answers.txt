@@ -73,3 +73,6 @@
 
 23/part1/sample: 94
 23/part2/sample: 154
+
+24/part1/sample: 2
+24/part2/sample: 47
