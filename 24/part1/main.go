@@ -18,9 +18,9 @@ type TestArea struct {
 }
 
 // for sample
-var testArea = TestArea{7, 27, 7, 27}
+// var testArea = TestArea{7, 27, 7, 27}
 // for input
-// var testArea = TestArea{200000000000000, 400000000000000, 200000000000000, 400000000000000}
+var testArea = TestArea{200000000000000, 400000000000000, 200000000000000, 400000000000000}
 
 func main() {
 	lines, err := util.ReadInputFile()
@@ -94,8 +94,8 @@ func pathsCrossInTestArea(stone1, stone2 Hailstone) bool {
 		insideTestAreaStr = " outside of test area"
 	}
 
-	fmt.Printf("Stones %d and %d cross in point %3.1f:%3.1f%s\n", stone1.lineIdx+1, stone2.lineIdx+1,
-		x0, y0, insideTestAreaStr)
+	fmt.Printf("Stones %d and %d cross in point %3.1f:%3.1f%s on time %.1f and %.1f\n", stone1.lineIdx+1, 
+		stone2.lineIdx+1, x0, y0, insideTestAreaStr, time1, time2)
 
 	return withingTestArea
 }
