@@ -1,9 +1,11 @@
 package util
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -82,4 +84,27 @@ func SliceContainsSameValue[T comparable](sl []T, value T) bool {
 
 func DebugLog(str string, params ...any) {
 	fmt.Printf(str, params...)
+}
+
+func MapKeysToSortedSlice[K cmp.Ordered, V any](m map[K]V) []K {
+	sl := MapKeysToSlice(m)
+	slices.Sort(sl)
+	return sl
+}
+
+func MapKeysToSlice[K comparable, V any](m map[K]V) []K {
+	sl := make([]K, 0, len(m))
+	for key := range m {
+		sl = append(sl, key)
+	}
+	return sl
+}
+
+func GetAnyMapKey[K comparable, V any](m map[K]V) (K, error) {
+	for k := range m {
+		return k, nil
+	}
+
+	var zeroValueKey K
+	return zeroValueKey, errors.New("Unable to get key from empty map")
 }

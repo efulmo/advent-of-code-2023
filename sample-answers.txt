@@ -76,3 +76,5 @@
 
 24/part1/sample: 2
 24/part2/sample: 47
+
+25/part1/sample: 54

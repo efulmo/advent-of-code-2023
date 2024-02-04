@@ -1,12 +1,10 @@
 package main
 
 import (
-	"cmp"
 	"errors"
 	"fmt"
 	"math"
 	"math/bits"
-	"slices"
 	"strings"
 
 	"github.com/efulmo/advent-of-code-2023/util"
@@ -64,7 +62,7 @@ func main() {
 	if len(rockXVelocities) == 0 {
 		panic("No common rock X velocities detected")
 	}
-	fmt.Println("Rock X velocities detected:", setToSlice(rockXVelocities))
+	fmt.Println("Rock X velocities detected:", util.MapKeysToSortedSlice(rockXVelocities))
 
 	rockYVelocities := detectRockVelocities(stonesByYVelocity, func(h Hailstone) int {
 		return h.yStart
@@ -72,7 +70,7 @@ func main() {
 	if len(rockYVelocities) == 0 {
 		panic("No common rock Y velocities detected")
 	}
-	fmt.Println("Rock Y velocities detected:", setToSlice(rockYVelocities))
+	fmt.Println("Rock Y velocities detected:", util.MapKeysToSortedSlice(rockYVelocities))
 
 	rockZVelocities := detectRockVelocities(stonesByZVelocity, func(h Hailstone) int {
 		return h.zStart
@@ -80,7 +78,7 @@ func main() {
 	if len(rockZVelocities) == 0 {
 		panic("No common rock Z velocities detected")
 	}
-	fmt.Println("Rock Z velocities detected:", setToSlice(rockZVelocities))
+	fmt.Println("Rock Z velocities detected:", util.MapKeysToSortedSlice(rockZVelocities))
 
 	var xStart, yStart, zStart int
 velocityLoop:
@@ -89,7 +87,7 @@ velocityLoop:
 			for zVelocity := range rockZVelocities {
 				for _, hailstone := range hailstones {
 					// fmt.Printf("Checking hailstone #%d\n", hailstoneIdx+1)
-					xStart, yStart, zStart, err = findFirstMatchingStartCoordinates(hailstones, 
+					xStart, yStart, zStart, err = findFirstMatchingStartCoordinates(hailstones,
 						hailstone, xVelocity, yVelocity, zVelocity)
 					if err == nil {
 						break velocityLoop
@@ -199,15 +197,6 @@ func getPossibleVelocities(hailstoneVelocity int, diffFactors map[uint]bool) map
 	return possibleVelocities
 }
 
-func setToSlice[T cmp.Ordered](set map[T]bool) []T {
-	sl := make([]T, 0, len(set))
-	for key := range set {
-		sl = append(sl, key)
-	}
-	slices.Sort(sl)
-	return sl
-}
-
 func detectRockVelocities(
 	stonesByVelocity map[int][]Hailstone,
 	stoneToStart func(Hailstone) int,
@@ -226,11 +215,11 @@ func detectRockVelocities(
 
 		diffFactors := getFactors(startDiff)
 		// fmt.Printf("Diff factors[%d]:\n", len(diffFactors))
-		// fmt.Println(setToSlice(diffFactors))
+		// fmt.Println(util.SetToSlice(diffFactors))
 
 		possibleRockVelocities := getPossibleVelocities(velocity, diffFactors)
 		// fmt.Printf("Possible rock velocities[%d]:\n", len(possibleRockVelocities))
-		// fmt.Println(setToSlice(possibleRockVelocities))
+		// fmt.Println(util.SetToSlice(possibleRockVelocities))
 
 		for velocity := range possibleRockVelocities {
 			pairCountByPossibleVelocity[velocity]++
